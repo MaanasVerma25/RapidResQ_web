@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link"
-import { Shield, LogOut, Settings, LayoutDashboard } from "lucide-react"
+import { Shield, LayoutDashboard, History, Radio as AntennaIcon, ShieldCheck, LogOut } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useRouter, usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
@@ -12,118 +12,75 @@ export function Navbar() {
   const [user, setUser] = useState<any>(null)
 
   useEffect(() => {
-    // Automatically set a guest user to bypass login checks
     setUser({ email: "guest@rapidresq.com", id: "guest-user" })
   }, [])
 
-  const handleLogout = async () => {
-    router.push("/")
-  }
-
-  const isAuthPage = ['/login', '/signup', '/'].includes(pathname)
   const isEmergency = pathname === '/emergency'
-
   if (isEmergency) return null
-  if (!user && !isAuthPage) return null
+
+  const navItems = [
+    { name: 'Home', path: '/dashboard', icon: LayoutDashboard },
+    { name: 'Setup', path: '/setup', icon: AntennaIcon },
+    { name: 'Guardians', path: '/contacts', icon: ShieldCheck },
+    { name: 'History', path: '/history', icon: History },
+  ]
 
   return (
-    <nav className="sticky top-0 z-50 w-full px-4 py-3 bg-slate-950/40 backdrop-blur-md border-b border-white/[0.05]">
-      <div className="container max-w-7xl mx-auto flex h-14 items-center justify-between">
-        
-        {/* Animated Brand Logo */}
-        <Link href={user ? "/dashboard" : "/"} className="flex items-center space-x-3 group">
-          <div className="relative flex items-center justify-center p-2 rounded-xl bg-purple-500/10 border border-purple-500/20 group-hover:border-purple-500/40 transition-colors duration-300">
-            <Shield className="h-5 w-5 text-purple-400 group-hover:scale-110 transition-transform duration-300" />
-            <span className="absolute inset-0 rounded-xl bg-purple-500/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300"></span>
-          </div>
-          <span className="text-xl font-bold tracking-tight text-glow bg-gradient-to-r from-white via-slate-200 to-purple-400 bg-clip-text text-transparent">
-            RapidResQ
-          </span>
-        </Link>
+    <>
+      <nav className="sticky top-0 z-50 w-full bg-surface/80 backdrop-blur-md border-b-2 border-outline-variant hidden md:block">
+        <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
+          <Link href="/dashboard" className="flex items-center gap-2 group">
+            <Shield className="h-6 w-6 text-primary-container fill-primary-container group-hover:scale-110 transition-transform" />
+            <span className="text-xl font-black tracking-tighter text-primary uppercase">RAPID REQ</span>
+          </Link>
 
-        {/* Navigation Actions */}
-        {user && (
-          <div className="flex items-center space-x-2 md:space-x-4">
-            
-            {/* Dashboard Link */}
-            <Link href="/dashboard">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 hidden md:flex items-center gap-2 border ${
-                  pathname === '/dashboard' 
-                    ? 'bg-purple-500/10 border-purple-500/30 text-purple-300' 
-                    : 'border-transparent text-slate-400 hover:text-white hover:bg-white/[0.03]'
-                }`}
-              >
-                <LayoutDashboard className="h-4.5 w-4.5" />
-                Dashboard
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`md:hidden p-2 rounded-lg border ${
-                  pathname === '/dashboard' 
-                    ? 'bg-purple-500/10 border-purple-500/30 text-purple-300' 
-                    : 'border-transparent text-slate-400'
-                }`}
-              >
-                <LayoutDashboard className="h-5 w-5" />
-              </Button>
-            </Link>
-
-            {/* Contacts Link */}
-            <Link href="/contacts">
-              <Button 
-                variant="ghost" 
-                size="sm" 
-                className={`relative px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 hidden md:flex items-center gap-2 border ${
-                  pathname === '/contacts' 
-                    ? 'bg-purple-500/10 border-purple-500/30 text-purple-300' 
-                    : 'border-transparent text-slate-400 hover:text-white hover:bg-white/[0.03]'
-                }`}
-              >
-                <Settings className="h-4.5 w-4.5" />
-                Contacts
-              </Button>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className={`md:hidden p-2 rounded-lg border ${
-                  pathname === '/contacts' 
-                    ? 'bg-purple-500/10 border-purple-500/30 text-purple-300' 
-                    : 'border-transparent text-slate-400'
-                }`}
-              >
-                <Settings className="h-5 w-5" />
-              </Button>
-            </Link>
-
-            {/* Premium Logout Button */}
-            <div className="h-5 w-[1px] bg-white/[0.08] mx-1"></div>
-            
+          <div className="flex items-center gap-2">
+            {navItems.map((item) => {
+              const Icon = item.icon
+              const isActive = pathname === item.path
+              return (
+                <Link key={item.path} href={item.path}>
+                  <Button
+                    variant="ghost"
+                    className={`flex items-center gap-2 font-bold text-xs uppercase tracking-widest px-4 h-10 rounded-lg transition-all ${
+                      isActive ? 'bg-primary-container text-on-primary-container shadow-lg shadow-primary-container/20' : 'text-on-surface-variant hover:text-primary hover:bg-surface-variant'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    {item.name}
+                  </Button>
+                </Link>
+              )
+            })}
+            <div className="w-[1px] h-6 bg-outline-variant mx-2"></div>
             <Button 
               variant="ghost" 
-              size="icon" 
-              onClick={handleLogout}
-              className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 p-2 rounded-lg transition-all duration-300"
+              onClick={() => router.push('/')}
+              className="text-on-surface-variant hover:text-error hover:bg-error/10 h-10 w-10 p-0 rounded-lg"
             >
               <LogOut className="h-5 w-5" />
             </Button>
-
           </div>
-        )}
+        </div>
+      </nav>
 
-        {/* Fallback Unauthenticated Links */}
-        {!user && isAuthPage && (
-          <div className="flex items-center space-x-4">
-            <Link href="/dashboard">
-              <Button variant="ghost" className="text-slate-300 hover:text-white">Dashboard</Button>
+      {/* Mobile Bottom Nav */}
+      <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-surface-container-highest border-t-2 border-outline-variant flex justify-around items-center px-4 py-2 pb-safe shadow-lg shadow-primary/10 rounded-t-xl">
+        {navItems.map((item) => {
+          const Icon = item.icon
+          const isActive = pathname === item.path
+          return (
+            <Link key={item.path} href={item.path} className="flex-1 max-w-[80px]">
+              <div className={`flex flex-col items-center justify-center gap-1 py-1 rounded-xl transition-all ${
+                isActive ? 'bg-primary-container text-on-primary-container scale-90' : 'text-on-surface-variant hover:text-primary'
+              }`}>
+                <Icon className="h-5 w-5" />
+                <span className="text-[10px] font-bold uppercase tracking-tighter">{item.name}</span>
+              </div>
             </Link>
-          </div>
-        )}
-
-      </div>
-    </nav>
+          )
+        })}
+      </nav>
+    </>
   )
 }
