@@ -55,14 +55,17 @@ const config: Config = {
         },
       },
       borderRadius: {
-        lg: "0.5rem",
-        md: "calc(0.5rem - 2px)",
-        sm: "calc(0.5rem - 4px)",
-        xl: "0.75rem",
+        sm: "0.25rem",
+        DEFAULT: "0.5rem",
+        md: "0.75rem",
+        lg: "1.0rem",
+        xl: "1.5rem",
+        full: "9999px",
       },
       fontFamily: {
         sans: ["Inter", "sans-serif"],
         mono: ["Geist", "monospace"],
+        geist: ["Geist", "sans-serif"],
       },
       spacing: {
         base: "8px",

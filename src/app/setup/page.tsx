@@ -3,7 +3,6 @@ import { useState } from "react"
 import { Shield, Settings, Mic, Info, Gauge, Activity, Apple, Smartphone, LayoutDashboard, History, CheckCircle, Smartphone as FitBit, BrainCircuit } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 import { Slider } from "@/components/ui/slider"
 import { motion, AnimatePresence } from "framer-motion"
@@ -25,155 +24,180 @@ export default function SetupPage() {
   }
 
   return (
-    <div className="flex-1 bg-background text-foreground min-h-screen font-sans">
+    <div className="flex-1 bg-[#111317] text-[#e2e2e8] min-h-screen font-sans selection:bg-[#ff5f1f]/30">
 
-      <header className="sticky top-0 left-0 w-full h-20 flex justify-between items-center px-6 z-50 border-b border-border bg-background/80 backdrop-blur-md">
+      {/* Header */}
+      <header className="sticky top-0 left-0 w-full h-16 flex justify-between items-center px-6 z-50 border-b border-[#282a2e] bg-[#111317]/80 backdrop-blur-xl">
         <div className="flex items-center gap-3">
-          <Shield className="h-7 w-7 text-primary shadow-sm" />
-          <h1 className="text-2xl font-black tracking-tighter text-primary uppercase italic">RAPID REQ</h1>
+          <div className="relative">
+            <Shield className="h-6 w-6 text-[#ff5f1f] fill-[#ff5f1f]/10" />
+            <div className="absolute inset-0 h-6 w-6 text-[#ff5f1f] animate-pulse blur-[4px] opacity-40 pointer-events-none" />
+          </div>
+          <span className="text-base font-black tracking-tight text-white uppercase font-sans">
+            RAPID <span className="text-[#ff5f1f]">REQ</span>
+          </span>
         </div>
-        <Button variant="ghost" size="icon" className="bg-card rounded-xl border border-border">
-          <Settings className="h-6 w-6 text-muted-foreground" />
+        <Button variant="ghost" size="icon" className="rounded-md border border-[#2d2f36] bg-[#1a1c20] hover:border-[#ff5f1f]/50 hover:bg-[#1a1c20] transition-all">
+          <Settings className="w-5 h-5 text-[#8e9aaf]" />
         </Button>
       </header>
 
-      <main className="px-6 py-12 max-w-2xl mx-auto w-full flex flex-col gap-12 pb-32">
+      <main className="px-6 py-8 max-w-xl mx-auto w-full flex flex-col gap-8 pb-32">
 
-        <section className="text-center space-y-4">
-          <h2 className="text-4xl font-black tracking-tighter uppercase italic">Trigger Setup</h2>
-          <p className="text-base text-muted-foreground font-bold uppercase tracking-wide leading-relaxed">Configure hands-free protection layers and calibrate high-fidelity anomaly detection.</p>
+        <section className="text-center space-y-2">
+          <h2 className="text-2xl font-black tracking-tight uppercase text-white">Trigger Setup</h2>
+          <p className="text-[10px] font-bold font-geist text-[#8e9aaf] max-w-sm mx-auto uppercase tracking-[0.2em] leading-relaxed">
+            Configure hands-free protection layers and calibrate high-fidelity anomaly detection.
+          </p>
         </section>
 
-        {/* Voice Keyword Detection Block */}
-        <Card className="rounded-[2rem] border-l-8 border-primary p-8 space-y-6 shadow-2xl bg-card border-y-0 border-r-0">
+        {/* Voice Keyword Detection Block (Tonal level nesting) */}
+        <section className="bg-[#1a1c20] p-6 rounded-lg shadow-md space-y-5">
           <div className="flex justify-between items-start">
-            <div className="flex items-center gap-4">
-              <Mic className="h-8 w-8 text-primary" />
-              <h3 className="text-2xl font-black uppercase italic tracking-tight">Voice Keywords</h3>
+            <div className="flex items-center gap-3.5">
+              <Mic className="h-5.5 w-5.5 text-[#ff5f1f]" />
+              <h3 className="text-base font-bold text-white tracking-wide">Voice Keyword Detection</h3>
             </div>
-            <button onClick={() => setShowVoiceTip(!showVoiceTip)} className="p-2 hover:bg-muted/10 rounded-full transition-colors">
-              <Info className="h-6 w-6 text-muted-foreground" />
+            <button onClick={() => setShowVoiceTip(!showVoiceTip)} className="text-[#8e9aaf] hover:text-white transition-colors">
+              <Info className="h-4.5 w-4.5" />
             </button>
           </div>
+          
           <AnimatePresence>
             {showVoiceTip && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="bg-background/50 p-4 rounded-xl text-sm text-muted-foreground border border-border font-medium leading-relaxed"
+                className="bg-[#111317] p-4 rounded-md text-[10px] text-[#bbc7dd] border border-[#2d2f36] font-bold font-geist tracking-wide leading-relaxed"
               >
                 Keywords are processed locally on-device. When detected, the app initiates a countdown before contacting your Guardians.
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between p-5 bg-background/40 rounded-2xl border border-border active:scale-[0.98] transition-transform">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-black uppercase italic tracking-wide">Keyword: 'Help'</span>
-                <span className="text-xs text-muted-foreground font-bold uppercase">Emergency broadcast trigger</span>
+
+          <div className="space-y-3.5">
+            <div className="flex items-center justify-between p-4 bg-[#111317] rounded-md border border-[#2d2f36]/40">
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-white">Keyword: 'Help'</span>
+                <span className="text-[9px] text-[#8e9aaf] font-bold font-geist tracking-wider uppercase mt-1">Emergency broadcast trigger</span>
               </div>
-              <Switch defaultChecked className="h-8 w-14" />
+              <Switch defaultChecked className="data-[state=checked]:bg-[#ff5f1f] h-6 w-11 border-none" />
             </div>
-            <div className="flex items-center justify-between p-5 bg-background/40 rounded-2xl border border-border active:scale-[0.98] transition-transform">
-              <div className="flex flex-col gap-1">
-                <span className="text-sm font-black uppercase italic tracking-wide">Keyword: 'Stop'</span>
-                <span className="text-xs text-muted-foreground font-bold uppercase">Detection cancellation</span>
+            <div className="flex items-center justify-between p-4 bg-[#111317] rounded-md border border-[#2d2f36]/40">
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-white">Keyword: 'Stop'</span>
+                <span className="text-[9px] text-[#8e9aaf] font-bold font-geist tracking-wider uppercase mt-1">Detection cancellation</span>
               </div>
-              <Switch defaultChecked className="h-8 w-14" />
+              <Switch defaultChecked className="data-[state=checked]:bg-[#ff5f1f] h-6 w-11 border-none" />
             </div>
           </div>
+          
           <Button
             onClick={handleCalibration}
-            size="lg"
-            className={`w-full h-16 rounded-2xl font-black uppercase tracking-[0.2em] italic flex items-center justify-center gap-3 transition-all shadow-xl ${
-              isCalibrating ? 'bg-muted text-muted-foreground' : 'bg-primary text-primary-foreground hover:scale-[1.02]'
+            className={`w-full py-5 rounded-md font-black text-[10px] uppercase tracking-widest flex items-center justify-center gap-2 transition-all shadow-md border-none ${
+              isCalibrating 
+                ? 'bg-[#111317] text-[#ff5f1f] border border-[#ff5f1f]/30' 
+                : isCalibrated
+                  ? 'bg-[#2ff801] text-[#111317] safety-glow-green'
+                  : 'bg-[#ff5f1f] text-[#111317] hover:bg-[#ff5f1f]/90 safety-glow-orange'
             }`}
           >
             {isCalibrating ? (
-              <span className="animate-spin h-6 w-6 border-3 border-current border-t-transparent rounded-full" />
+              <span className="animate-spin h-4 w-4 border-2 border-[#ff5f1f] border-t-transparent rounded-full" />
             ) : isCalibrated ? (
-              <CheckCircle className="h-6 w-6" />
+              <CheckCircle className="h-4.5 w-4.5 text-[#111317]" />
             ) : (
-              <Activity className="h-6 w-6" />
+              <Activity className="h-4.5 w-4.5 text-[#111317]" />
             )}
-            {isCalibrating ? 'Listening...' : isCalibrated ? 'Calibrated' : 'Calibrate AI Trigger'}
+            {isCalibrating ? 'Listening...' : isCalibrated ? 'Calibrated' : 'Test Trigger Calibration'}
           </Button>
-        </Card>
+        </section>
 
         {/* Behavioral Anomaly Detection Block */}
-        <Card className="rounded-[2rem] border-l-8 border-secondary p-8 space-y-8 shadow-2xl bg-card border-y-0 border-r-0">
+        <section className="bg-[#1a1c20] p-6 rounded-lg shadow-md space-y-5">
           <div className="flex justify-between items-start">
-            <div className="flex items-center gap-4">
-              <BrainCircuit className="h-8 w-8 text-secondary" />
-              <h3 className="text-2xl font-black uppercase italic tracking-tight">AI Behavior</h3>
+            <div className="flex items-center gap-3.5">
+              <BrainCircuit className="h-5.5 w-5.5 text-[#2ff801]" />
+              <h3 className="text-base font-bold text-white tracking-wide">Behavioral Anomalies</h3>
             </div>
-            <button onClick={() => setShowAiTip(!showAiTip)} className="p-2 hover:bg-muted/10 rounded-full transition-colors">
-              <Info className="h-6 w-6 text-muted-foreground" />
+            <button onClick={() => setShowAiTip(!showAiTip)} className="text-[#8e9aaf] hover:text-white transition-colors">
+              <Info className="h-4.5 w-4.5" />
             </button>
           </div>
+          
           <AnimatePresence>
             {showAiTip && (
               <motion.div
                 initial={{ height: 0, opacity: 0 }}
                 animate={{ height: 'auto', opacity: 1 }}
                 exit={{ height: 0, opacity: 0 }}
-                className="bg-background/50 p-4 rounded-xl text-sm text-muted-foreground border border-border font-medium leading-relaxed"
+                className="bg-[#111317] p-4 rounded-md text-[10px] text-[#bbc7dd] border border-[#2d2f36] font-bold font-geist tracking-wide leading-relaxed"
               >
                 Our AI monitors movement patterns (sudden stops, running, falls) to predict threats before you can even react.
               </motion.div>
             )}
           </AnimatePresence>
-          <div className="space-y-8">
-            <div className="space-y-4 px-2">
+
+          <div className="space-y-6">
+            <div className="space-y-3.5">
               <div className="flex justify-between items-end">
-                <span className="text-xs font-black uppercase tracking-widest text-muted-foreground">Movement Sensitivity</span>
-                <span className="text-secondary font-black text-lg">{sensitivity}%</span>
+                <span className="text-xs font-bold text-white">Movement Sensitivity</span>
+                <span className="text-[#ff5f1f] font-black text-xs font-mono">{sensitivity}%</span>
               </div>
-              <Slider value={[sensitivity]} onValueChange={(v) => setSensitivity(v[0])} max={100} step={1} className="py-4" />
-              <div className="flex justify-between text-xs font-black text-muted-foreground uppercase tracking-tighter">
-                <span>Passive Monitoring</span>
-                <span>High Response Threshold</span>
+              <Slider 
+                value={[sensitivity]} 
+                onValueChange={(v) => setSensitivity(v[0])} 
+                max={100} 
+                step={1}
+                className="[&_.relative]:bg-[#ff5f1f]"
+              />
+              <div className="flex justify-between text-[8px] font-bold font-geist text-[#8e9aaf] uppercase tracking-wider">
+                <span>Passive</span>
+                <span>High Response</span>
               </div>
             </div>
-            <div className="p-6 bg-background/40 rounded-2xl border border-border flex items-center gap-5">
-              <div className="p-3 bg-secondary/10 rounded-xl">
-                <Gauge className="h-6 w-6 text-secondary shadow-sm" />
+            
+            <div className="p-4 bg-[#111317] rounded-md border border-[#2d2f36]/40 flex items-center gap-4">
+              <div className="p-2.5 bg-[#2ff801]/10 rounded-md">
+                <Gauge className="h-4.5 w-4.5 text-[#2ff801]" />
               </div>
               <div>
-                <p className="text-sm font-black uppercase italic tracking-tight">Real-time Telemetry</p>
-                <p className="text-xs text-muted-foreground font-bold uppercase mt-1">AI is analyzing gait patterns.</p>
+                <p className="text-xs font-bold text-white">Real-time Telemetry</p>
+                <p className="text-[9px] text-[#8e9aaf] font-bold font-geist uppercase tracking-wider mt-0.5">AI is currently analyzing gait patterns</p>
               </div>
             </div>
           </div>
-        </Card>
+        </section>
 
         {/* Health Sync Block */}
-        <Card className="rounded-[2rem] border-l-8 border-muted p-8 space-y-6 shadow-2xl bg-card border-y-0 border-r-0">
-          <div className="flex items-center gap-4">
-            <Activity className="h-8 w-8 text-primary" />
-            <h3 className="text-2xl font-black uppercase italic tracking-tight">Physiological</h3>
+        <section className="bg-[#1a1c20] p-6 rounded-lg shadow-md space-y-5">
+          <div className="flex items-center gap-3.5">
+            <Activity className="h-5.5 w-5.5 text-[#bbc7dd]" />
+            <h3 className="text-base font-bold text-white tracking-wide">Physiological Sync</h3>
           </div>
-          <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide leading-relaxed">Link your wearable devices to trigger alerts based on heart rate spikes or stress indicators.</p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <Button variant="outline" className="flex items-center justify-between h-20 px-6 bg-background/40 rounded-2xl border-border hover:border-primary/50 transition-all group">
-              <div className="flex items-center gap-4">
-                <Apple className="h-6 w-6 text-red-500 fill-red-500/10" />
-                <span className="text-sm font-black uppercase italic tracking-widest">Apple Health</span>
+          <p className="text-[10px] font-bold font-geist text-[#8e9aaf] uppercase tracking-wider leading-relaxed">
+            Link your wearable devices to trigger alerts based on heart rate spikes or stress indicators.
+          </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <Button variant="outline" className="flex items-center justify-between p-5 bg-[#111317] rounded-md border border-[#2d2f36] hover:border-[#ff5f1f]/50 hover:bg-[#111317]/80 transition-colors group h-auto">
+              <div className="flex items-center gap-3">
+                <Apple className="h-4.5 w-4.5 text-[#e31b23] fill-[#e31b23]/10" />
+                <span className="text-[9px] font-bold font-geist text-white uppercase tracking-wider">Apple Health</span>
               </div>
             </Button>
-            <Button variant="outline" className="flex items-center justify-between h-20 px-6 bg-background/40 rounded-2xl border-border hover:border-secondary/50 transition-all group">
-              <div className="flex items-center gap-4">
-                <FitBit className="h-6 w-6 text-secondary shadow-sm" />
-                <span className="text-sm font-black uppercase italic tracking-widest">Google Fit</span>
+            <Button variant="outline" className="flex items-center justify-between p-5 bg-[#111317] rounded-md border border-[#2d2f36] hover:border-[#ff5f1f]/50 hover:bg-[#111317]/80 transition-colors group h-auto">
+              <div className="flex items-center gap-3">
+                <FitBit className="h-4.5 w-4.5 text-[#2ff801]" />
+                <span className="text-[9px] font-bold font-geist text-white uppercase tracking-wider">Google Fit</span>
               </div>
             </Button>
           </div>
-        </Card>
+        </section>
 
-        <div className="py-12 flex flex-col items-center justify-center text-center space-y-6 opacity-30">
-          <Shield className="h-12 w-12 text-muted-foreground" />
-          <p className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground italic">End-to-End Encrypted Protection</p>
+        <div className="py-8 flex flex-col items-center justify-center text-center space-y-3 opacity-60">
+          <Shield className="h-8 w-8 text-[#8e9aaf]" />
+          <p className="text-[9px] font-bold font-geist uppercase tracking-[0.2em] text-[#8e9aaf]">End-to-End Encrypted Protection</p>
         </div>
       </main>
     </div>
