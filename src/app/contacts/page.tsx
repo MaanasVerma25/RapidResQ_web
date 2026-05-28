@@ -1,220 +1,221 @@
 "use client"
 import { useEffect, useState } from "react"
-import { Plus, Trash2, User, Phone, ShieldAlert, Heart } from "lucide-react"
+import { useRouter } from "next/navigation"
+import { Plus, Trash2, User, Phone, ShieldAlert, Heart, Shield, Settings, MessageSquare, PlusCircle, Star, AlertTriangle, Eye, Activity } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { supabase } from "@/lib/supabase"
 import { motion, AnimatePresence } from "framer-motion"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export default function ContactsPage() {
-  const [user, setUser] = useState<any>(null); const [contacts, setContacts] = useState<any[]>([])
-  const [name, setName] = useState(""); const [phone, setPhone] = useState(""); const [relation, setRelation] = useState("")
+  const [user, setUser] = useState<any>(null)
+  const [contacts, setContacts] = useState<any[]>([])
+  const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [relation, setRelation] = useState("")
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetch = async () => {
       // Mocked guest user to bypass login checks
-      const mockUser = { id: "guest-user", email: "guest@rapidresq.com" }
-      setUser(mockUser)
-
-      let contactsList = []
-      try {
-        const localContactsStr = localStorage.getItem("rapidresq_contacts")
-        contactsList = localContactsStr ? JSON.parse(localContactsStr) : []
-      } catch (e) {
-        console.error("Failed to parse local contacts:", e)
-      }
-
-      if (contactsList.length === 0) {
-        contactsList = [
-          { id: "1", name: "John Doe", phone_number: "+1 555-0199", relationship: "Friend" },
-          { id: "2", name: "Jane Smith", phone_number: "+1 555-0120", relationship: "Sister" }
-        ]
-        localStorage.setItem("rapidresq_contacts", JSON.stringify(contactsList))
-      }
-      
-      setContacts(contactsList)
+      setUser({ id: 'guest', email: 'guest@rapidresq.ai' })
+      const { data } = await supabase.from('contacts').select('*').limit(5)
+      setContacts(data || [
+        { id: '1', name: 'Sarah Miller', phone: '+1 (555) 012-3456', relation: 'Primary Guardian', online: true }
+      ])
       setLoading(false)
     }
     fetch()
   }, [])
 
-  const add = async (e: React.FormEvent) => {
-    e.preventDefault(); if (!user) return
-    
-    const newContact = {
-      id: Date.now().toString(),
-      name,
-      phone_number: phone,
-      relationship: relation || "Contact"
-    }
-
-    const updatedContacts = [...contacts, newContact]
-    setContacts(updatedContacts)
-    localStorage.setItem("rapidresq_contacts", JSON.stringify(updatedContacts))
+  const addContact = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!name || !phone) return
+    const newContact = { id: Math.random().toString(), name, phone, relation, online: false }
+    setContacts([...contacts, newContact])
     setName(""); setPhone(""); setRelation("")
-
-    // Attempt to write to Supabase, fail silently if database keys are not configured
-    try {
-      await supabase.from('emergency_contacts').insert({ user_id: user.id, name, phone_number: phone, relationship: relation })
-    } catch (e) {
-      console.warn("Supabase insert bypassed:", e)
-    }
   }
 
-  const del = async (id: string) => {
-    const updatedContacts = contacts.filter(c => c.id !== id)
-    setContacts(updatedContacts)
-    localStorage.setItem("rapidresq_contacts", JSON.stringify(updatedContacts))
-
-    // Attempt to delete from Supabase, fail silently
-    try {
-      await supabase.from('emergency_contacts').delete().eq('id', id)
-    } catch (e) {
-      console.warn("Supabase delete bypassed:", e)
-    }
+  const deleteContact = async (id: string) => {
+    setContacts(contacts.filter(c => c.id !== id))
   }
-
-  const getRelationBadgeStyle = (relationship: string) => {
-    const rel = relationship.toLowerCase();
-    if (rel.includes("friend")) return "bg-purple-500/10 border-purple-500/20 text-purple-300";
-    if (rel.includes("sister") || rel.includes("mother") || rel.includes("wife")) return "bg-pink-500/10 border-pink-500/20 text-pink-300";
-    if (rel.includes("brother") || rel.includes("father") || rel.includes("husband")) return "bg-blue-500/10 border-blue-500/20 text-blue-300";
-    return "bg-slate-500/10 border-slate-500/20 text-slate-300";
-  }
-
-  if (loading) return <div className="flex-1 flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-primary"></div></div>
 
   return (
-    <div className="flex-1 max-w-4xl w-full mx-auto p-4 md:p-8 space-y-8 relative">
-      
-      {/* Background Orbs */}
-      <div className="absolute top-[30%] left-[-10%] w-[350px] h-[350px] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none -z-10"></div>
-      <div className="absolute bottom-[20%] right-[-10%] w-[300px] h-[300px] bg-indigo-500/5 rounded-full blur-[90px] pointer-events-none -z-10"></div>
-
-      <header className="space-y-1.5 border-b border-white/[0.04] pb-6">
-        <h2 className="text-3xl font-extrabold tracking-tight text-glow text-gradient-primary">Emergency Contacts</h2>
-        <p className="text-slate-400 text-sm">Add or manage contacts who will be immediately notified in distress situations.</p>
+    <div className="min-h-screen bg-[#111317] text-[#e2e2e8] pb-20 font-sans selection:bg-[#ff5f1f]/30">
+      {/* Dynamic Header */}
+      <header className="sticky top-0 z-50 bg-[#111317]/80 backdrop-blur-xl border-b border-[#2d2f36] px-6 py-4">
+        <div className="max-w-6xl mx-auto flex justify-between items-center">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[#ff5f1f]/10 rounded-lg">
+              <ShieldAlert className="w-6 h-6 text-[#ff5f1f]" />
+            </div>
+            <h1 className="text-xl font-bold tracking-tight">Guardians & Protocols</h1>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 bg-[#2ff801]/10 rounded-full border border-[#2ff801]/20">
+            <div className="w-2 h-2 bg-[#2ff801] rounded-full animate-pulse" />
+            <span className="text-[10px] font-bold text-[#2ff801] uppercase tracking-widest">System Armed</span>
+          </div>
+        </div>
       </header>
 
-      <div className="grid gap-6 md:grid-cols-5 items-start">
-        
-        {/* Add Contact Card Form */}
-        <Card className="glass-card border-white/5 md:col-span-2 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-24 h-24 bg-purple-500/5 rounded-full blur-xl pointer-events-none"></div>
-          
-          <CardHeader>
-            <CardTitle className="text-lg font-bold text-white tracking-wide">Secure Contact</CardTitle>
-            <CardDescription className="text-xs text-slate-400">Inputs are strictly compiled locally in sandboxed memory.</CardDescription>
-          </CardHeader>
+      <main className="max-w-4xl mx-auto p-6 space-y-10">
+        {/* Emergency Protocol Textarea */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="w-5 h-5 text-[#ff5f1f]" />
+            <h2 className="text-lg font-bold">Emergency Protocol</h2>
+          </div>
+          <div className="glass-panel p-1 rounded-xl">
+            <div className="bg-[#111317] rounded-lg p-4 space-y-4">
+              <Label className="text-[10px] uppercase tracking-widest text-[#909196] font-bold">Incident Response Logic</Label>
+              <Textarea
+                placeholder="Describe exactly what should happen when a distress event is detected..."
+                className="bg-transparent border-none focus-visible:ring-0 text-sm min-h-[100px] resize-none p-0 leading-relaxed"
+                defaultValue="In case of distress detection, immediately alert all active guardians with my current GPS location and enable live audio stream. If unresponsive for 60 seconds, initiate direct link to emergency dispatch (911)."
+              />
+              <Button className="w-full bg-[#e2e2e8] text-[#111317] hover:bg-white font-bold text-[11px] h-9 tracking-widest uppercase">
+                Save Protocol
+              </Button>
+            </div>
+          </div>
+        </section>
 
-          <form onSubmit={add}>
-            <CardContent className="space-y-4">
+        {/* Tracking Permissions */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <Eye className="w-5 h-5 text-[#ff5f1f]" />
+            <h2 className="text-lg font-bold">Tracking Permissions</h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center justify-between p-4 bg-[#1c1e24] rounded-xl border border-[#2d2f36]">
+              <div>
+                <p className="text-sm font-bold">Live GPS Broadcast</p>
+                <p className="text-[10px] text-[#909196]">Guardians see real-time location during alerts</p>
+              </div>
+              <Checkbox id="gps" defaultChecked className="border-[#ff5f1f] data-[state=checked]:bg-[#ff5f1f]" />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-[#1c1e24] rounded-xl border border-[#2d2f36]">
+              <div>
+                <p className="text-sm font-bold">Audio Feed (Listen-In)</p>
+                <p className="text-[10px] text-[#909196]">Allows Primary Guardian to activate mic</p>
+              </div>
+              <Checkbox id="audio" className="border-[#ff5f1f] data-[state=checked]:bg-[#ff5f1f]" />
+            </div>
+          </div>
+        </section>
+
+        {/* Register Guardian Form */}
+        <section className="space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <PlusCircle className="w-5 h-5 text-[#ff5f1f]" />
+            <h2 className="text-lg font-bold">Register New Guardian</h2>
+          </div>
+          <form onSubmit={addContact} className="space-y-4 bg-[#1c1e24] p-6 rounded-2xl border border-[#2d2f36]">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-xs text-slate-400 uppercase tracking-widest font-bold">Contact Name</Label>
+                <Label className="text-[10px] uppercase tracking-widest text-[#909196]">Name</Label>
                 <Input 
                   value={name} 
-                  onChange={e => setName(e.target.value)} 
-                  required 
-                  className="bg-slate-950/60 border-white/10 rounded-xl focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 text-white transition-all py-5"
-                  placeholder="e.g. John Doe"
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Full Name"
+                  className="bg-[#111317] border-[#2d2f36] h-11 focus:border-[#ff5f1f] transition-colors"
                 />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="text-xs text-slate-400 uppercase tracking-widest font-bold">Relationship</Label>
-                  <Input 
-                    value={relation} 
-                    onChange={e => setRelation(e.target.value)} 
-                    className="bg-slate-950/60 border-white/10 rounded-xl focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 text-white transition-all py-5"
-                    placeholder="e.g. Friend"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-xs text-slate-400 uppercase tracking-widest font-bold">Priority Badge</Label>
-                  <div className="h-10 border border-white/10 bg-slate-950/40 rounded-xl flex items-center justify-center text-xs font-semibold text-purple-300 select-none">
-                    <Heart className="h-4.5 w-4.5 text-purple-400 fill-purple-400/20 mr-1.5 animate-pulse" />
-                    SOS ACTIVE
-                  </div>
-                </div>
-              </div>
-
               <div className="space-y-2">
-                <Label className="text-xs text-slate-400 uppercase tracking-widest font-bold">Phone Number</Label>
+                <Label className="text-[10px] uppercase tracking-widest text-[#909196]">Phone</Label>
                 <Input 
                   value={phone} 
-                  onChange={e => setPhone(e.target.value)} 
-                  required 
-                  className="bg-slate-950/60 border-white/10 rounded-xl focus:border-purple-500/50 focus:ring-1 focus:ring-purple-500/20 text-white transition-all py-5"
-                  placeholder="e.g. +1 555-0199"
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="+1 (555) 000-0000"
+                  className="bg-[#111317] border-[#2d2f36] h-11 focus:border-[#ff5f1f] transition-colors"
                 />
               </div>
-
-              <Button type="submit" className="w-full py-5 rounded-xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 shadow-md hover:shadow-purple-500/10 hover:scale-[1.01] transition-all">
-                <Plus className="mr-2 h-4 w-4" /> Save Security Contact
-              </Button>
-            </CardContent>
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] uppercase tracking-widest text-[#909196]">Priority Rank</Label>
+              <select
+                className="w-full bg-[#111317] border-[#2d2f36] h-11 rounded-md px-3 text-sm focus:border-[#ff5f1f] outline-none"
+                value={relation}
+                onChange={(e) => setRelation(e.target.value)}
+              >
+                <option value="Primary Guardian">Primary Guardian</option>
+                <option value="Secondary Contact">Secondary Contact</option>
+                <option value="Family Member">Family Member</option>
+              </select>
+            </div>
+            <Button type="submit" className="w-full bg-transparent border border-[#2d2f36] hover:bg-[#2d2f36] text-[#e2e2e8] font-bold text-[11px] h-11 tracking-widest uppercase">
+              Add Guardian Account
+            </Button>
           </form>
-        </Card>
+        </section>
 
-        {/* Saved Contacts Badges HUD List */}
-        <div className="md:col-span-3 space-y-4">
-          <AnimatePresence initial={false}>
-            {contacts.length === 0 ? (
-              <div className="flex flex-col items-center justify-center p-8 bg-slate-950/10 border border-white/5 border-dashed rounded-2xl text-slate-500 space-y-2">
-                <User className="h-8 w-8 text-slate-600" />
-                <p className="text-sm font-semibold">No Secure Contacts Registered</p>
-                <p className="text-xs text-slate-500">Please append high-priority numbers using the safety control box.</p>
-              </div>
-            ) : (
-              contacts.map(c => (
+        {/* Active Guardians List */}
+        <section className="space-y-6">
+          <div className="flex justify-between items-end">
+            <h2 className="text-xl font-black uppercase tracking-tighter">Active Guardians</h2>
+            <span className="text-[10px] text-[#909196] font-bold uppercase tracking-widest">2 Secured</span>
+          </div>
+
+          <div className="space-y-4">
+            <AnimatePresence>
+              {contacts.map((contact) => (
                 <motion.div
-                  key={c.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="glass-card p-4 rounded-2xl flex items-center justify-between gap-4 border border-white/5 hover:border-purple-500/15 transition-all shadow-md group relative overflow-hidden"
+                  key={contact.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                  className="group relative overflow-hidden bg-[#1c1e24] rounded-2xl border border-[#2d2f36] p-5 transition-all hover:border-[#ff5f1f]/50"
                 >
-                  <div className="absolute top-0 left-0 w-[3px] h-full bg-gradient-to-b from-purple-500 to-indigo-500 opacity-60"></div>
-                  
-                  <div className="flex items-center gap-4 pl-2">
-                    <div className="h-12 w-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center text-purple-400 shadow-inner group-hover:scale-105 transition-transform duration-300">
-                      <User className="h-5 w-5" />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <p className="font-extrabold text-white tracking-wide text-sm md:text-base">{c.name}</p>
-                        <span className={`px-2 py-0.5 text-[9px] font-black uppercase rounded border tracking-wider select-none ${getRelationBadgeStyle(c.relationship)}`}>
-                          {c.relationship}
-                        </span>
+                  <div className="flex items-center gap-5">
+                    <div className="relative">
+                      <div className="w-14 h-14 rounded-full bg-gradient-to-br from-[#ff5f1f] to-[#ff5f1f]/20 p-[2px]">
+                        <div className="w-full h-full rounded-full bg-[#111317] flex items-center justify-center overflow-hidden">
+                          <User className="w-6 h-6 text-[#909196]" />
+                        </div>
                       </div>
-                      <p className="text-xs text-slate-400 font-semibold flex items-center gap-1.5">
-                        <Phone className="h-3.5 w-3.5 text-slate-500" />
-                        {c.phone_number}
+                      {contact.online && (
+                        <div className="absolute bottom-0 right-0 w-4 h-4 bg-[#2ff801] border-2 border-[#1c1e24] rounded-full" />
+                      )}
+                    </div>
+
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-1">
+                        <Star className="w-3 h-3 text-[#ff5f1f] fill-[#ff5f1f]" />
+                        <h3 className="font-bold text-lg leading-none">{contact.name}</h3>
+                      </div>
+                      <p className="text-[10px] text-[#909196] font-medium uppercase tracking-wider mb-2">
+                        {contact.relation} • {contact.phone}
                       </p>
+
+                      <div className="flex gap-2">
+                        <Button variant="outline" size="sm" className="h-8 bg-[#111317] border-[#2d2f36] hover:bg-[#2d2f36] flex-1 gap-2">
+                          <Phone className="w-3 h-3" />
+                        </Button>
+                        <Button variant="outline" size="sm" className="h-8 bg-[#111317] border-[#2d2f36] hover:bg-[#2d2f36] flex-1 gap-2">
+                          <MessageSquare className="w-3 h-3" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => deleteContact(contact.id)}
+                          className="h-8 hover:bg-red-500/10 hover:text-red-500 text-[#909196]"
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      </div>
                     </div>
                   </div>
-
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    onClick={() => del(c.id)}
-                    className="text-slate-400 hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/20 rounded-xl p-2.5 transition-all"
-                  >
-                    <Trash2 className="h-5 w-5" />
-                  </Button>
                 </motion.div>
-              ))
-            )}
-          </AnimatePresence>
-        </div>
-
-      </div>
-
+              ))}
+            </AnimatePresence>
+          </div>
+        </section>
+      </main>
     </div>
   )
 }
