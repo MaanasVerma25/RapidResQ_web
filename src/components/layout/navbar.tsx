@@ -27,23 +27,24 @@ export function Navbar() {
 
   return (
     <>
-      <nav className="sticky top-0 z-50 w-full bg-surface/80 backdrop-blur-md border-b-2 border-outline-variant hidden md:block">
-        <div className="container max-w-7xl mx-auto flex h-16 items-center justify-between px-4">
-          <Link href="/dashboard" className="flex items-center gap-2 group">
-            <Shield className="h-6 w-6 text-primary-container fill-primary-container group-hover:scale-110 transition-transform" />
-            <span className="text-xl font-black tracking-tighter text-primary uppercase">RAPID REQ</span>
+      <nav className="sticky top-0 z-50 w-full bg-background/80 backdrop-blur-md border-b border-border hidden md:block">
+        <div className="container max-w-7xl mx-auto flex h-20 items-center justify-between px-6">
+          <Link href="/dashboard" className="flex items-center gap-3 group">
+            <Shield className="h-7 w-7 text-primary group-hover:scale-110 transition-transform shadow-sm" />
+            <span className="text-2xl font-black tracking-tighter text-primary uppercase italic">RAPID REQ</span>
           </Link>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {navItems.map((item) => {
               const Icon = item.icon
               const isActive = pathname === item.path
               return (
                 <Link key={item.path} href={item.path}>
                   <Button
-                    variant="ghost"
-                    className={`flex items-center gap-2 font-bold text-xs uppercase tracking-widest px-4 h-10 rounded-lg transition-all ${
-                      isActive ? 'bg-primary-container text-on-primary-container shadow-lg shadow-primary-container/20' : 'text-on-surface-variant hover:text-primary hover:bg-surface-variant'
+                    variant={isActive ? "default" : "ghost"}
+                    size="sm"
+                    className={`flex items-center gap-2 font-black text-xs uppercase tracking-[0.2em] px-5 h-11 rounded-xl transition-all italic ${
+                      isActive ? 'shadow-lg shadow-primary/20' : 'text-muted-foreground hover:text-primary'
                     }`}
                   >
                     <Icon className="h-4 w-4" />
@@ -52,11 +53,12 @@ export function Navbar() {
                 </Link>
               )
             })}
-            <div className="w-[1px] h-6 bg-outline-variant mx-2"></div>
+            <div className="w-[1px] h-6 bg-border mx-2"></div>
             <Button 
               variant="ghost" 
+              size="icon"
               onClick={() => router.push('/')}
-              className="text-on-surface-variant hover:text-error hover:bg-error/10 h-10 w-10 p-0 rounded-lg"
+              className="text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-11 w-11 rounded-xl"
             >
               <LogOut className="h-5 w-5" />
             </Button>
@@ -65,17 +67,17 @@ export function Navbar() {
       </nav>
 
       {/* Mobile Bottom Nav */}
-      <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-surface-container-highest border-t-2 border-outline-variant flex justify-around items-center px-4 py-2 pb-safe shadow-lg shadow-primary/10 rounded-t-xl">
+      <nav className="fixed bottom-0 left-0 w-full z-50 md:hidden bg-card border-t border-border flex justify-around items-center px-4 py-3 pb-safe shadow-2xl shadow-primary/10">
         {navItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.path
           return (
-            <Link key={item.path} href={item.path} className="flex-1 max-w-[80px]">
-              <div className={`flex flex-col items-center justify-center gap-1 py-1 rounded-xl transition-all ${
-                isActive ? 'bg-primary-container text-on-primary-container scale-90' : 'text-on-surface-variant hover:text-primary'
+            <Link key={item.path} href={item.path} className="flex-1 max-w-[90px]">
+              <div className={`flex flex-col items-center justify-center gap-1.5 py-2.5 rounded-2xl transition-all ${
+                isActive ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105' : 'text-muted-foreground hover:text-primary'
               }`}>
-                <Icon className="h-5 w-5" />
-                <span className="text-[10px] font-bold uppercase tracking-tighter">{item.name}</span>
+                <Icon className="h-6 w-6" />
+                <span className="text-[10px] font-black uppercase tracking-widest italic">{item.name}</span>
               </div>
             </Link>
           )

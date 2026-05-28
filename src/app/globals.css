@@ -5,33 +5,33 @@
 @layer base {
   :root {
     --background: 225 15% 8%;
-    --foreground: 240 10% 90%;
+    --foreground: 240 10% 95%; /* Lightened */
 
-    --primary: 15 100% 80%;
-    --primary-foreground: 15 100% 18%;
+    --primary: 15 100% 56%; /* More vibrant safety orange */
+    --primary-foreground: 15 100% 5%;
 
-    --secondary: 105 100% 89%;
-    --secondary-foreground: 105 100% 11%;
+    --secondary: 105 100% 49%; /* More vibrant neon green */
+    --secondary-foreground: 105 100% 5%;
 
     --card: 225 15% 10%;
-    --card-foreground: 240 10% 90%;
+    --card-foreground: 240 10% 95%;
 
     --popover: 225 15% 8%;
-    --popover-foreground: 240 10% 90%;
+    --popover-foreground: 240 10% 95%;
 
-    --muted: 225 10% 20%;
-    --muted-foreground: 225 10% 65%;
+    --muted: 225 10% 25%;
+    --muted-foreground: 225 10% 75%; /* Significantly lightened for visibility */
 
-    --accent: 225 10% 20%;
-    --accent-foreground: 240 10% 90%;
+    --accent: 225 10% 25%;
+    --accent-foreground: 240 10% 95%;
 
-    --destructive: 0 100% 50%;
+    --destructive: 0 100% 60%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 225 10% 20%;
-    --input: 225 10% 20%;
+    --border: 225 10% 25%;
+    --input: 225 10% 25%;
     --ring: 15 100% 56%;
-    --radius: 0.5rem;
+    --radius: 0.75rem; /* Increased default radius */
   }
 }
 
@@ -44,6 +44,8 @@
     color: #e2e2e8;
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
@@ -55,11 +57,15 @@
   }
 
   .safety-glow-green {
-    box-shadow: 0 0 20px rgba(42, 229, 0, 0.15);
+    box-shadow: 0 0 25px rgba(47, 248, 1, 0.2);
   }
 
   .safety-glow-orange {
-    box-shadow: 0 0 25px rgba(255, 95, 31, 0.3);
+    box-shadow: 0 0 30px rgba(255, 95, 31, 0.35);
+  }
+
+  .text-shadow-sm {
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   }
 }
 
